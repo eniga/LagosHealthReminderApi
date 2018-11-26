@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LagosHealthReminderApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,5 +23,10 @@ namespace LagosHealthReminderApi.DbContext
         public int UpdateUserId { get; set; }
         public DateTime UpdateDate { get; set; }
         public int PHCId { get; set; }
+    }
+
+    public class CreatePatientResponse : Response
+    {
+        public int PatientId { get; set; }
     }
 }

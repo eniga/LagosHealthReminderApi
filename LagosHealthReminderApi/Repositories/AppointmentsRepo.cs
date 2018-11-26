@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using LagosHealthReminderApi.DbContext;
 using LagosHealthReminderApi.Models;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -47,7 +48,7 @@ namespace LagosHealthReminderApi.Repositories
         public Appointments GetAppointment(int AppointmentId)
         {
             Appointments appointments = new Appointments();
-            string sql = "SELECT * FROM APPOINTMENTS WHERE APPOINTMENTID = ?AppointmentId";
+            string sql = "SELECT * FROM APPOINTMENTS WHERE APPOINTMENTID = @AppointmentId";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -60,6 +61,24 @@ namespace LagosHealthReminderApi.Repositories
                 logger.Error(ex);
             }
             return appointments;
+        }
+
+        public List<Appointments> GePatientAppointments(int PatientId)
+        {
+            List<Appointments> list = new List<Appointments>();
+            string sql = "SELECT * FROM APPOINTMENTS WHERE PATIENTID = @PatientId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    list = conn.Query<Appointments>(sql, new { PatientId }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return list;
         }
 
         public List<Appointments> GetPending()
@@ -116,10 +135,12 @@ namespace LagosHealthReminderApi.Repositories
             return list;
         }
 
-        public Response CreateAppointment(Appointments appointments)
+        public Response CreateAppointment(AppointmentsContext appointments)
         {
             Response response = new Response();
-            string sql = "";
+            string sql = @"INSERT INTO APPOINTMENTREGISTRATIONS (PATIENTID, SERVICETYPEID, APPOINTMENTDATE,
+                            INSERTUSERID, INSERTDATE) VALUES (@PatientId, @ServiceTypeId, @AppointmentDate,
+                            @InsertUserId, GetDate())";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -138,10 +159,11 @@ namespace LagosHealthReminderApi.Repositories
             return response;
         }
 
-        public Response UpdateAppointment(Appointments appointments)
+        public Response UpdateAppointment(AppointmentsContext appointments)
         {
             Response response = new Response();
-            string sql = "";
+            string sql = @"UPDATE APPOINTMENTREGISTRATIONS SET SERVICETYPEID = @ServiceTypeId, 
+                            APPOINTMENTDATE = @AppointmentDate WHERE APPOINTMENTID = @AppointmentId";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -163,7 +185,7 @@ namespace LagosHealthReminderApi.Repositories
         public Response DeleteAppointment(int AppointmentId)
         {
             Response response = new Response();
-            string sql = "DELETE FROM APPOINTMENTS WHERE APPOINTMENTID = ?AppointmentId";
+            string sql = "DELETE FROM APPOINTMENTS WHERE APPOINTMENTID = @AppointmentId";
             try
             {
                 using (IDbConnection conn = GetConnection())

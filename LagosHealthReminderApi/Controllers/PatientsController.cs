@@ -52,7 +52,7 @@ namespace LagosHealthReminderApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Response> Post([FromBody]PatientContext patients)
+        public ActionResult<CreatePatientResponse> Post([FromBody]PatientContext patients)
         {
             return _repo.Create(patients);
         }

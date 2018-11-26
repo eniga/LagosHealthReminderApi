@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LagosHealthReminderApi.DbContext;
 using LagosHealthReminderApi.Models;
 using LagosHealthReminderApi.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,12 @@ namespace LagosHealthReminderApi.Controllers
             return _repo.GetAppointment(AppointmentId);
         }
 
+        [HttpGet("Patient/{PatientId}")]
+        public ActionResult<List<Appointments>> GetBYPatienId(int PatientId)
+        {
+            return _repo.GePatientAppointments(PatientId);
+        }
+
         [HttpGet("Pending")]
         public ActionResult<List<Appointments>> GetPending()
         {
@@ -52,13 +59,13 @@ namespace LagosHealthReminderApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Response> Post([FromBody]Appointments appointments)
+        public ActionResult<Response> Post([FromBody]AppointmentsContext appointments)
         {
             return _repo.CreateAppointment(appointments);
         }
 
         [HttpPut]
-        public ActionResult<Response> Put([FromBody]Appointments appointments)
+        public ActionResult<Response> Put([FromBody]AppointmentsContext appointments)
         {
             return _repo.UpdateAppointment(appointments);
         }

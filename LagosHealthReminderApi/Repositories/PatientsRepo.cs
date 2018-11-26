@@ -119,20 +119,21 @@ namespace LagosHealthReminderApi.Repositories
             return patient;
         }
 
-        public Response Create(PatientContext context)
+        public CreatePatientResponse Create(PatientContext context)
         {
-            Response response = new Response();
+            CreatePatientResponse response = new CreatePatientResponse();
             string sql = @"INSERT INTO PATIENTS (FIRSTNAME, MIDDLENAME, LASTNAME, PHONE, ALTPHONE, EMAIL, DOB, SETTLEMENTID, INSERTUSERID, INSERTDATE, QRCODE, PHCID) VALUES
-                            (@FirstName, @MiddleName, @LastName, @Phone, @AltPhone, @Email, @Dob, @SettlementId, @InsertUserId, GetDate(), @QrCode, @PHCId)";
+                            (@FirstName, @MiddleName, @LastName, @Phone, @AltPhone, @Email, @Dob, @SettlementId, @InsertUserId, GetDate(), @QrCode, @PHCId); SELECT CAST(SCOPE_IDENTITY() as int)";
             try
             {
                 using (IDbConnection conn = GetConnection())
                 {
                     UsersRepo usersRepo = new UsersRepo(ConnectionString);
                     context.PHCId = usersRepo.GetUser(context.InsertUserId).PHCId;
-                    conn.Execute(sql, context);
+                    int id = conn.Query<int>(sql, context).FirstOrDefault();
                     response.Status = true;
                     response.StatusMessage = "Approved and completed successfully";
+                    response.PatientId = id;
                 }
             }
             catch (Exception ex)
