@@ -33,7 +33,7 @@ namespace LagosHealthReminderApi.Repositories
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
-                            a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser
+                            a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
                             from Patients a 
                             left outer join QrCodes b on b.QrCode = a.QrCode
                             inner join Settlements c on c.SettlementId = a.SettlementId
@@ -64,7 +64,7 @@ namespace LagosHealthReminderApi.Repositories
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
-                            a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser
+                            a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
                             from Patients a 
                             left outer join QrCodes b on b.QrCode = a.QrCode
                             inner join Settlements c on c.SettlementId = a.SettlementId
@@ -95,7 +95,7 @@ namespace LagosHealthReminderApi.Repositories
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
-                            a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser
+                            a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
                             from Patients a 
                             left outer join QrCodes b on b.QrCode = a.QrCode
                             inner join Settlements c on c.SettlementId = a.SettlementId
@@ -122,8 +122,8 @@ namespace LagosHealthReminderApi.Repositories
         public CreatePatientResponse Create(PatientContext context)
         {
             CreatePatientResponse response = new CreatePatientResponse();
-            string sql = @"INSERT INTO PATIENTS (FIRSTNAME, MIDDLENAME, LASTNAME, PHONE, ALTPHONE, EMAIL, DOB, SETTLEMENTID, INSERTUSERID, INSERTDATE, QRCODE, PHCID) VALUES
-                            (@FirstName, @MiddleName, @LastName, @Phone, @AltPhone, @Email, @Dob, @SettlementId, @InsertUserId, GetDate(), @QrCode, @PHCId); SELECT CAST(SCOPE_IDENTITY() as int)";
+            string sql = @"INSERT INTO PATIENTS (FIRSTNAME, MIDDLENAME, LASTNAME, PHONE, ALTPHONE, EMAIL, DOB, SETTLEMENTID, INSERTUSERID, INSERTDATE, QRCODE, PHCID, HOUSENUMBER) VALUES
+                            (@FirstName, @MiddleName, @LastName, @Phone, @AltPhone, @Email, @Dob, @SettlementId, @InsertUserId, GetDate(), @QrCode, @PHCId, @HouseNumber); SELECT CAST(SCOPE_IDENTITY() as int)";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -148,7 +148,7 @@ namespace LagosHealthReminderApi.Repositories
         public Response Update(PatientContext context)
         {
             Response response = new Response();
-            string sql = @"UPDATE PATIENTS SET FIRSTNAME = @FirstName, MiddleName = @MiddleName, LastName = @LastName, Phone = @Phone,
+            string sql = @"UPDATE PATIENTS SET FIRSTNAME = @FirstName, MiddleName = @MiddleName, LastName = @LastName, Phone = @Phone, HouseNumber = @HouseNumber,
                             AltPhone = @AltPhone, Email = @Email, Dob = @Dob, SettlementId = @SettlementId, UpdateUserId = @UpdateUserId, 
                             UpdateDate = GetDate() where PatientId = @PatientId";
             try
@@ -189,6 +189,60 @@ namespace LagosHealthReminderApi.Repositories
                 logger.Error(ex);
             }
             return response;
+        }
+
+        public List<AppointmentResponse> GetAppointments(int PatientId)
+        {
+            List<AppointmentResponse> list = new List<AppointmentResponse>();
+            string sql = @"Select ServiceTypeId, ServiceTypeName from ServiceTypes";
+            string sql1 = @"select a.PatientAppointmentId, a.PatientId, concat(b.FirstName, ' ', b.MiddleName, ' ', b.LastName) PatientName, b.Phone, b.AltPhone, b.Dob,
+                            a.ServiceTypeId, d.ServiceTypeName, a.InsertUserId, c.Username InsertUser, a.InsertDate, a.UpdateUserId, e.Username UpdateUser, a.UpdateDate 
+                            from PatientAppointment a inner join patients b on a.patientid = b.patientid
+                            inner join users c on a.InsertUserId = c.UserId
+                            inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId
+                            left outer join Users e on a.UpdateUserId = e.UserId where a.PatientId = @PatientId and a.ServiceTypeId = @ServiceTypeId";
+            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
+                            a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
+                            from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
+                            where a.PatientAppointmentId = @PatientAppointmentId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    var services = conn.Query<ServiceTypes>(sql).ToList();
+                    services.ForEach(service =>
+                    {
+                        AppointmentResponse aresponse = new AppointmentResponse()
+                        {
+                            ServiceTypeId = service.ServiceTypeId,
+                            ServiceTypeName = service.ServiceTypeName
+                        };
+                        List<Appointments> appointmentList = new List<Appointments>();
+                        var patientAppointments = conn.Query<PatientAppointment>(sql1, new { ServiceTypeId = service.ServiceTypeId, PatientId }).ToList();
+                        if (patientAppointments.Count > 0)
+                        {
+                            aresponse.OptionType = patientAppointments[0].OptionType;
+                            patientAppointments.ForEach(item =>
+                            {
+                                var appointments = conn.Query<Appointments>(sql2, new { item.PatientAppointmentId }).FirstOrDefault();
+                                appointments.AltPhone = item.AltPhone;
+                                appointments.PatientId = item.PatientId;
+                                appointments.PatientName = item.PatientName;
+                                appointments.Phone = item.Phone;
+                                appointments.Dob = item.Dob;
+                                appointmentList.Add(appointments);
+                            });
+                        }
+                        aresponse.appointments = appointmentList;
+                        list.Add(aresponse);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return list;
         }
 
     }

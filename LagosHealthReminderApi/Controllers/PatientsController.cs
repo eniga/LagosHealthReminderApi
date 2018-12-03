@@ -69,10 +69,10 @@ namespace LagosHealthReminderApi.Controllers
             return _repo.Delete(PatientId);
         }
 
-        [HttpGet("Appointments")]
-        public ActionResult<List<Appointments>> GetAppointments()
+        [HttpGet("Appointments/{PatientId}")]
+        public ActionResult<List<AppointmentResponse>> GetAppointments(int PatientId)
         {
-            return new List<Appointments>();
+            return _repo.GetAppointments(PatientId);
         }
 
         [HttpGet("Appointments/Pending")]

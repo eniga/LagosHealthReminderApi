@@ -18,6 +18,7 @@ namespace LagosHealthReminderApi.DbContext
         public string Email { get; set; }
         public DateTime Dob { get; set; }
         public int SettlementId { get; set; }
+        public string HouseNumber { get; set; }
         public int InsertUserId { get; set; }
         public DateTime InsertDate { get; set; }
         public int UpdateUserId { get; set; }

@@ -23,7 +23,7 @@ namespace LagosHealthReminderApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Appointments>> Get()
+        public ActionResult<List<AppointmentResponse>> Get()
         {
             return _repo.GetAll();
         }
@@ -35,15 +35,21 @@ namespace LagosHealthReminderApi.Controllers
         }
 
         [HttpGet("Patient/{PatientId}")]
-        public ActionResult<List<Appointments>> GetBYPatienId(int PatientId)
+        public ActionResult<List<PatientAppointmentResponse>> GetBYPatienId(int PatientId)
         {
             return _repo.GePatientAppointments(PatientId);
         }
 
         [HttpGet("Pending")]
-        public ActionResult<List<Appointments>> GetPending()
+        public ActionResult<List<AppointmentResponse>> GetPending()
         {
             return _repo.GetPending();
+        }
+
+        [HttpGet("Pending/{PHCId}")]
+        public ActionResult<List<AppointmentResponse>> GetPending(int PHCId)
+        {
+            return _repo.GetPending(PHCId);
         }
 
         [HttpGet("Confirmed")]
@@ -53,13 +59,19 @@ namespace LagosHealthReminderApi.Controllers
         }
 
         [HttpGet("Defaulters")]
-        public ActionResult<List<Appointments>> GetDefaulters()
+        public ActionResult<List<AppointmentResponse>> GetDefaulters()
         {
             return _repo.GetDefaulters();
         }
 
+        [HttpGet("Defaulters/{PHCId}")]
+        public ActionResult<List<AppointmentResponse>> GetDefaulters(int PHCId)
+        {
+            return _repo.GetDefaulters(PHCId);
+        }
+
         [HttpPost]
-        public ActionResult<Response> Post([FromBody]AppointmentsContext appointments)
+        public ActionResult<Response> Post([FromBody]AppointmentRequest appointments)
         {
             return _repo.CreateAppointment(appointments);
         }

@@ -18,6 +18,7 @@ namespace LagosHealthReminderApi.Models
         public string AltPhone { get; set; }
         public string Email { get; set; }
         public DateTime Dob { get; set; }
+        public string HouseNumber { get; set; }
         public int SettlementId { get; set; }
         public string Settlement { get; set; }
         public int WardId { get; set; }
