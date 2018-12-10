@@ -14,5 +14,7 @@ namespace LagosHealthReminderApi.DbContext
         public DateTime InsertDate { get; set; }
         public int UpdateUserId { get; set; }
         public DateTime UpdateDate { get; set; }
+        public int TypeId { get; set; }
+        public int Duration { get; set; }
     }
 }

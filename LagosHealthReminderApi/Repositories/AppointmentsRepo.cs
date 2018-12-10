@@ -382,7 +382,7 @@ namespace LagosHealthReminderApi.Repositories
         public Response CreateAppointment(AppointmentRequest appointments)
         {
             Response response = new Response();
-            string sql = @"INSERT INTO PatientAppointment (PATIENTID, SERVICETYPEID, OPTIONTYPE
+            string sql = @"INSERT INTO PatientAppointment (PATIENTID, SERVICETYPEID, OPTIONTYPE,
                             INSERTUSERID, INSERTDATE) VALUES (@PatientId, @ServiceTypeId, @OptionType,
                             @InsertUserId, GetDate()); SELECT CAST(SCOPE_IDENTITY() as int)";
             string sql2 = @"insert into Appointments (PatientAppointmentId, ServiceKindId, AppointmentDate, StatusId, InsertUserId, InsertDate)

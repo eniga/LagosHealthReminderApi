@@ -89,6 +89,7 @@ namespace LagosHealthReminderApi.Models
         public int PatientId { get; set; }
         public int ServiceTypeId { get; set; }
         public int ServiceKindId { get; set; }
+        public string OptionType { get; set; }
         public DateTime AppointmentDate { get; set; }
         public int InsertUserId { get; set; }
         public DateTime InsertDate { get; set; }

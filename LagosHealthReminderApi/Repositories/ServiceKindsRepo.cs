@@ -31,9 +31,10 @@ namespace LagosHealthReminderApi.Repositories
         {
             List<ServiceKinds> list = new List<ServiceKinds>();
             string sql = @"SELECT a.ServiceKindId, a.ServiceKindName, a.ServiceTypeId, d.ServiceTypeName as ServiceType,
-                            a.InsertUserId, b.Username as InsertUser, a.InsertDate, a.UpdateUserId, c.Username, a.UpdateDate
-                            FROM SERVICEKINDS a inner join ServiceTypes d on d.ServiceTypeId = a.ServiceTypeId
+                            a.InsertUserId, b.Username as InsertUser, a.InsertDate, a.UpdateUserId, c.Username, a.UpdateDate,
+                            a.TypeId, e.Type, a.Duration FROM SERVICEKINDS a inner join ServiceTypes d on d.ServiceTypeId = a.ServiceTypeId
                             left outer join Users b on b.UserId = a.InsertUserId left outer join Users c on c.UserId = a.UpdateUserId
+                            left outer join Types e on a.TypeId = e.TypeId
                             WHERE a.ServiceTypeId = @ServiceTypeId";
             try
             {
