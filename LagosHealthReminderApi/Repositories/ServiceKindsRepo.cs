@@ -75,7 +75,7 @@ namespace LagosHealthReminderApi.Repositories
         public Response Update(ServiceKindContext kind)
         {
             Response response = new Response();
-            string sql = "UPDATE SERVICEKINDS SET SERVICEKINDNAME = @ServiceKindName, SERVICETYPEID = @ServiceTypeId, UPDATEUSERID = @UpdateUserId, UPDATEDATE = GETDATE() WHERE SERVICEKINDID = @ServiceKindId";
+            string sql = "UPDATE SERVICEKINDS SET SERVICEKINDNAME = @ServiceKindName, SERVICETYPEID = @ServiceTypeId, TypeId = @TypeId, Duration = @Duration, UPDATEUSERID = @UpdateUserId, UPDATEDATE = GETDATE() WHERE SERVICEKINDID = @ServiceKindId";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -114,6 +114,24 @@ namespace LagosHealthReminderApi.Repositories
                 logger.Error(ex);
             }
             return response;
+        }
+
+        public List<Types> ReadTypes()
+        {
+            List<Types> list = new List<Types>();
+            string sql = @"SELECT e.TypeId, e.Type FROM Types e";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    list = conn.Query<Types>(sql).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return list;
         }
     }
 }

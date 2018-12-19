@@ -46,5 +46,11 @@ namespace LagosHealthReminderApi.Controllers
         {
             return _repo.Delete(ServiceKindId);
         }
+
+        [HttpGet("types")]
+        public ActionResult<List<Types>> ReadTypes()
+        {
+            return _repo.ReadTypes();
+        }
     }
 }
