@@ -171,7 +171,7 @@ namespace LagosHealthReminderApi.Repositories
             string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
-                            where a.PatientAppointmentId = @PatientAppointmentId";
+                            where a.PatientAppointmentId = @PatientAppointmentId and CONVERT(DATE, a.AppointmentDate, 102) = CONVERT(date, GETDATE(), 102)";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -222,7 +222,7 @@ namespace LagosHealthReminderApi.Repositories
             string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
-                            where a.PatientAppointmentId = @PatientAppointmentId";
+                            where a.PatientAppointmentId = @PatientAppointmentId and CONVERT(DATE, a.AppointmentDate, 102) = CONVERT(date, GETDATE(), 102)";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -287,7 +287,9 @@ namespace LagosHealthReminderApi.Repositories
                             from PatientAppointment a inner join patients b on a.patientid = b.patientid
                             inner join users c on a.InsertUserId = c.UserId
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
-                            left outer join Users e on a.UpdateUserId = e.UserId where a.ServiceTypeId = @ServiceTypeId";
+                            left outer join Users e on a.UpdateUserId = e.UserId
+                            inner join Appointments g on g.PatientAppointmentId = a.PatientAppointmentId
+                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() and g.ConfirmationDate is null";
             string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
@@ -312,7 +314,7 @@ namespace LagosHealthReminderApi.Repositories
                             patientAppointments.ForEach(item =>
                             {
                                 var appointments = conn.Query<Appointments>(sql2, new { item.PatientAppointmentId }).ToList();
-                                appointments.Select(c => { c.PatientId = item.PatientId; c.PatientName = item.PatientName; c.Phone = item.Phone; c.AltPhone = item.AltPhone; c.Dob = item.Dob; return c; }).ToList();
+                                appointments.Select(c => { c.SettlementId = item.SettlementId; c.Settlement = item.Settlement; c.PatientId = item.PatientId; c.PatientName = item.PatientName; c.Phone = item.Phone; c.AltPhone = item.AltPhone; c.Dob = item.Dob; return c; }).ToList();
                                 appointmentList.AddRange(appointments);
                             });
                         }
@@ -338,7 +340,9 @@ namespace LagosHealthReminderApi.Repositories
                             from PatientAppointment a inner join patients b on a.patientid = b.patientid
                             inner join users c on a.InsertUserId = c.UserId
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
-                            left outer join Users e on a.UpdateUserId = e.UserId where b.PHCId = @PHCId and a.ServiceTypeId = @ServiceTypeId";
+                            left outer join Users e on a.UpdateUserId = e.UserId
+                            inner join Appointments g on g.PatientAppointmentId = a.PatientAppointmentId
+                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() and g.ConfirmationDate is null";
             string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
@@ -363,7 +367,7 @@ namespace LagosHealthReminderApi.Repositories
                             patientAppointments.ForEach(item =>
                             {
                                 var appointments = conn.Query<Appointments>(sql2, new { item.PatientAppointmentId }).ToList();
-                                appointments.Select(c => { c.PatientId = item.PatientId; c.PatientName = item.PatientName; c.Phone = item.Phone; c.AltPhone = item.AltPhone; c.Dob = item.Dob; return c; }).ToList();
+                                appointments.Select(c => { c.SettlementId = item.SettlementId; c.Settlement = item.Settlement; c.PatientId = item.PatientId; c.PatientName = item.PatientName; c.Phone = item.Phone; c.AltPhone = item.AltPhone; c.Dob = item.Dob; return c; }).ToList();
                                 appointmentList.AddRange(appointments);
                             });
                         }
