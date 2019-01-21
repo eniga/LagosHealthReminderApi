@@ -10,4 +10,9 @@ namespace LagosHealthReminderApi.Models
         public bool Status { get; set; }
         public string StatusMessage { get; set; }
     }
+
+    public class ConfirmAppointmentResponse : Response
+    {
+        public bool LastAppointment { get; set; }
+    }
 }

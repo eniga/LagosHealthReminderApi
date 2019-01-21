@@ -29,6 +29,10 @@ namespace LagosHealthReminderApi.Models
         public int UpdateUserId { get; set; }
         public string UpdateUser { get; set; }
         public DateTime UpdateDate { get; set; }
+        public int Defaulter { get; set; }
+        public DateTime ContactedOn { get; set; }
+        public int ContactedBy { get; set; }
+        public string ContactByUsername { get; set; }
     }
 
     public class PatientAppointment
@@ -105,5 +109,18 @@ namespace LagosHealthReminderApi.Models
         public DateTime InsertDate { get; set; }
         public int UpdateUserId { get; set; }
         public DateTime UpdateDate { get; set; }
+    }
+
+    public class ConfirmAppointmentRequest
+    {
+        public int AppointmentId { get; set; }
+        public int InsertUserId { get; set; }
+    }
+
+    public class LastAppointment
+    {
+        public int ServiceTypeId { get; set; }
+        public int TotalAppointments { get; set; }
+        public int TotalServiceKinds { get; set; }
     }
 }

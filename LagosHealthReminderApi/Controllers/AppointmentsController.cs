@@ -76,6 +76,18 @@ namespace LagosHealthReminderApi.Controllers
             return _repo.CreateAppointment(appointments);
         }
 
+        [HttpPost("Confirm")]
+        public ActionResult<ConfirmAppointmentResponse> ConfirmAppointment([FromBody] ConfirmAppointmentRequest context)
+        {
+            return _repo.ConfirmAppointment(context);
+        }
+
+        [HttpPost("Defaulters/Confirm")]
+        public ActionResult<Response> ConfirmDefaulter([FromBody] ConfirmAppointmentRequest context)
+        {
+            return _repo.ConfirmDefaulterCall(context);
+        }
+
         [HttpPut]
         public ActionResult<Response> Put([FromBody]AppointmentsContext appointments)
         {

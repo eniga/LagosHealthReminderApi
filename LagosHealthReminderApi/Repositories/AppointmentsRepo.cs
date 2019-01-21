@@ -39,7 +39,7 @@ namespace LagosHealthReminderApi.Repositories
                             inner join users c on a.InsertUserId = c.UserId
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId where a.ServiceTypeId = @ServiceTypeId";
-            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
+            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, a.Defaulter, a.ContactedOn, a.ContactedBy,
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
                             where a.PatientAppointmentId = @PatientAppointmentId";
@@ -109,7 +109,7 @@ namespace LagosHealthReminderApi.Repositories
                             inner join users c on a.InsertUserId = c.UserId
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId where a.PatientId = @PatientId and a.ServiceTypeId = @ServiceTypeId order by a.InsertDate";
-            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
+            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName,  a.Defaulter, a.ContactedOn, a.ContactedBy,
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
                             where a.PatientAppointmentId = @PatientAppointmentId";
@@ -168,7 +168,7 @@ namespace LagosHealthReminderApi.Repositories
                             inner join users c on a.InsertUserId = c.UserId
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId where a.ServiceTypeId = @ServiceTypeId";
-            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
+            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, a.Defaulter, a.ContactedOn, a.ContactedBy,
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
                             where a.PatientAppointmentId = @PatientAppointmentId and CONVERT(DATE, a.AppointmentDate, 102) = CONVERT(date, GETDATE(), 102)";
@@ -219,7 +219,7 @@ namespace LagosHealthReminderApi.Repositories
                             inner join users c on a.InsertUserId = c.UserId
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId where b.PHCId = @PHCId and a.ServiceTypeId = @ServiceTypeId";
-            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
+            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, a.Defaulter, a.ContactedOn, a.ContactedBy, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
                             where a.PatientAppointmentId = @PatientAppointmentId and CONVERT(DATE, a.AppointmentDate, 102) = CONVERT(date, GETDATE(), 102)";
@@ -289,8 +289,8 @@ namespace LagosHealthReminderApi.Repositories
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId
                             inner join Appointments g on g.PatientAppointmentId = a.PatientAppointmentId
-                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() and g.ConfirmationDate is null";
-            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
+                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() and g.ConfirmationDate is null and g.StatusId = 1";
+            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, a.Defaulter, a.ContactedOn, a.ContactedBy, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
                             where a.PatientAppointmentId = @PatientAppointmentId";
@@ -342,8 +342,8 @@ namespace LagosHealthReminderApi.Repositories
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId
                             inner join Appointments g on g.PatientAppointmentId = a.PatientAppointmentId
-                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() and g.ConfirmationDate is null";
-            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 
+                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() and g.ConfirmationDate is null and g.StatusId = 1";
+            string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, a.Defaulter, a.ContactedOn, a.ContactedBy, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
                             where a.PatientAppointmentId = @PatientAppointmentId";
@@ -477,6 +477,51 @@ namespace LagosHealthReminderApi.Repositories
             return response;
         }
 
+        public ConfirmAppointmentResponse ConfirmAppointment(ConfirmAppointmentRequest context)
+        {
+            ConfirmAppointmentResponse response = new ConfirmAppointmentResponse();
+            string sql = @"update appointments set confirmationdate = getdate(), statusid = 3, Defaulter = 0, updateuserid = @InsertUserId, updatedate = getdate() where appointmentid = @AppointmentId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    conn.Execute(sql, context);
+                    response.Status = true;
+                    response.StatusMessage = "Approved and completed successfully";
+                    response.LastAppointment = IsLastAppointment(context.AppointmentId);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.StatusMessage = "System Malfunction";
+                logger.Error(ex);
+            }
+            return response;
+        }
+
+        public Response ConfirmDefaulterCall(ConfirmAppointmentRequest context)
+        {
+            Response response = new Response();
+            string sql = @"update Appointments set Defaulter = 1, ContactedOn = getdate(), ContactedBy = @InsertUserId, updateuserid = @InsertUserId, updatedate = getdate() where appointmentid = @AppointmentId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    conn.Execute(sql, context);
+                    response.Status = true;
+                    response.StatusMessage = "Approved and completed successfully";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.StatusMessage = "System Malfunction";
+                logger.Error(ex);
+            }
+            return response;
+        }
+
         public Response DeleteAppointment(int AppointmentId)
         {
             Response response = new Response();
@@ -497,6 +542,34 @@ namespace LagosHealthReminderApi.Repositories
                 logger.Error(ex);
             }
             return response;
+        }
+
+        public bool IsLastAppointment(int AppointmentId)
+        {
+            bool ok = false;
+            string sql = @"select t.ServiceTypeId, count(*) TotalAppointments, (select count(*) from ServiceKinds where ServiceTypeId = t.ServiceTypeId) TotalServiceKinds from (
+                            select d.*, c.ServiceTypeId from Appointments a
+                            inner join PatientAppointment b on a.PatientAppointmentId = b.PatientAppointmentId
+                            inner join PatientAppointment c on c.ServiceTypeId = b.ServiceTypeId and c.PatientId = b.PatientId
+                            left outer join Appointments d on d.PatientAppointmentId = c.PatientAppointmentId
+                            where a.AppointmentId = @AppointmentId) t
+                            group by t.ServiceTypeId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    var result = conn.Query<LastAppointment>(sql, new { AppointmentId }).FirstOrDefault();
+                    if(result.TotalAppointments == result.TotalServiceKinds)
+                    {
+                        ok = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return ok;
         }
     }
 }
