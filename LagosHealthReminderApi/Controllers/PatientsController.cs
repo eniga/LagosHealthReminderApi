@@ -42,7 +42,7 @@ namespace LagosHealthReminderApi.Controllers
         [HttpGet("Phone/{PhoneNumber}")]
         public ActionResult<List<Patients>> GetByPhone(string PhoneNumber)
         {
-            return new List<Patients>();
+            return _repo.ReadByPhone(PhoneNumber);
         }
 
         [HttpGet("QrCode/{QrCode}")]
@@ -87,10 +87,10 @@ namespace LagosHealthReminderApi.Controllers
             return new Response();
         }
 
-        [HttpPut("QRCode/{QRCode}")]
-        public ActionResult<Response> UpdateQR(string QRCode, [FromBody] Patients patients)
+        [HttpPut("QRCode/{QRCode}/{PatientId}")]
+        public ActionResult<Response> UpdateQR(string QRCode, int PatientId)
         {
-            return new Response();
+            return _repo.UpdateQrCode(PatientId, QRCode);
         }
     }
 }

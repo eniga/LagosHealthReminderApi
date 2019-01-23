@@ -119,6 +119,69 @@ namespace LagosHealthReminderApi.Repositories
             return patient;
         }
 
+        public List<Patients> ReadByPhone(string PhoneNumber)
+        {
+            List<Patients> list = new List<Patients>();
+            string sql = @"SELECT a.PatientId, a.QrCode, b.QrCodeImage, i.PHCId, i.PHC,
+                            a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
+                            a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
+                            d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
+                            a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
+                            from Patients a 
+                            left outer join QrCodes b on b.QrCode = a.QrCode
+                            inner join Settlements c on c.SettlementId = a.SettlementId
+                            inner join Wards d on d.WardId = c.WardId
+                            inner join LGAs e on e.LGAId = d.LGAId
+                            inner join States f on f.StateId = e.StateId
+                            inner join users g on g.UserId = a.InsertUserId
+                            left outer join PHCs i on i.WardId = c.WardId
+                            left outer join Users h on h.UserId = a.UpdateUserId where SUBSTRING(a.Phone, LEN(a.Phone) - 9, 10) = @PhoneNumber";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    PhoneNumber = PhoneNumber.Substring(PhoneNumber.Length - 10, 10);
+                    list = conn.Query<Patients>(sql, new { PhoneNumber }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return list;
+        }
+
+        public Response UpdateQrCode(int PatientId, string QrCode)
+        {
+            Response response = new Response();
+            string sql = "update patients set qrcode = @QrCode where patientid = @PatientId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    var result = ReadQrCode(QrCode);
+                    if (result == null)
+                    {
+                        conn.Execute(sql, new { PatientId, QrCode });
+                        response.Status = true;
+                        response.StatusMessage = "Approved and completed successfully";
+                    }
+                    else
+                    {
+                        response.Status = false;
+                        response.StatusMessage = "QR Code already assigned to a patient";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.StatusMessage = "System Malfunction";
+                logger.Error(ex);
+            }
+            return response;
+        }
+
         public CreatePatientResponse Create(PatientContext context)
         {
             CreatePatientResponse response = new CreatePatientResponse();

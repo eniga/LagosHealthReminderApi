@@ -120,29 +120,33 @@ namespace LagosHealthReminderApi.Repositories
                     var services = conn.Query<ServiceTypes>(sql).ToList();
                     foreach(var service in services)
                     {
-                        var patientAppointments = conn.Query<PatientAppointment>(sql1, new { ServiceTypeId = service.ServiceTypeId, PatientId }).FirstOrDefault();
+                        var patientAppointments = conn.Query<PatientAppointment>(sql1, new { ServiceTypeId = service.ServiceTypeId, PatientId }).LastOrDefault();
                         if (patientAppointments != null)
                         {
-                            var appointments = conn.Query<Appointments>(sql2, new { patientAppointments.PatientAppointmentId }).FirstOrDefault();
+                            var appointments = conn.Query<Appointments>(sql2, new { patientAppointments.PatientAppointmentId }).LastOrDefault();
                             PatientAppointmentResponse aresponse = new PatientAppointmentResponse()
                             {
                                 ServiceTypeId = service.ServiceTypeId,
                                 ServiceTypeName = service.ServiceTypeName,
                                 OptionType = patientAppointments.OptionType,
-                                PatientId = appointments.PatientId,
-                                PatientName = appointments.PatientName,
-                                Phone = appointments.Phone,
-                                AltPhone = appointments.AltPhone,
-                                Dob = appointments.Dob,
+                                PatientId = patientAppointments.PatientId,
+                                PatientName = patientAppointments.PatientName,
+                                Phone = patientAppointments.Phone,
+                                AltPhone = patientAppointments.AltPhone,
+                                Dob = patientAppointments.Dob,
                                 ConfirmationDate = appointments.ConfirmationDate,
                                 AppointmentDate = appointments.AppointmentDate,
-                                HouseNumber = appointments.HouseNumber,
+                                HouseNumber = patientAppointments.HouseNumber,
                                 ServiceKindId = appointments.ServiceKindId,
                                 ServiceKindName = appointments.ServiceKindName,
-                                Settlement = appointments.Settlement,
-                                SettlementId = appointments.SettlementId,
+                                Settlement = patientAppointments.Settlement,
+                                SettlementId = patientAppointments.SettlementId,
                                 StatusDescription = appointments.StatusId == 0 ? "Defaulter" : appointments.StatusId == 3 ? "Returned" : "Pending",
-                                StatusId = appointments.StatusId
+                                StatusId = appointments.StatusId,
+                                AppointmentId = appointments.AppointmentId,
+                                ContactedBy = appointments.ContactedBy,
+                                ContactedOn = appointments.ContactedOn,
+                                Defaulter = appointments.Defaulter
                             };
                             list.Add(aresponse);
                         }
