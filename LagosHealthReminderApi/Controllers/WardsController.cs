@@ -28,10 +28,10 @@ namespace LagosHealthReminderApi.Controllers
             return _repo.ReadAll();
         }
 
-        [HttpGet("{SettlementId}")]
-        public ActionResult<List<Wards>> Get(int SettlementId)
+        [HttpGet("{LGAId}")]
+        public ActionResult<List<Wards>> Get(int LGAId)
         {
-            return _repo.Read(SettlementId);
+            return _repo.Read(LGAId);
         }
 
         [HttpPost]

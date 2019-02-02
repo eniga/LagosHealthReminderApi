@@ -212,7 +212,7 @@ namespace LagosHealthReminderApi.Repositories
         {
             Response response = new Response();
             string sql = @"UPDATE PATIENTS SET FIRSTNAME = @FirstName, MiddleName = @MiddleName, LastName = @LastName, Phone = @Phone, HouseNumber = @HouseNumber,
-                            AltPhone = @AltPhone, Email = @Email, Dob = @Dob, SettlementId = @SettlementId, UpdateUserId = @UpdateUserId, 
+                            AltPhone = @AltPhone, Email = @Email, Dob = @Dob, SettlementId = @SettlementId, UpdateUserId = @UpdateUserId, QrCode = @QrCode,
                             UpdateDate = GetDate() where PatientId = @PatientId";
             try
             {

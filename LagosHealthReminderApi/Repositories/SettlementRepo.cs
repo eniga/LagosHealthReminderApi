@@ -50,6 +50,55 @@ namespace LagosHealthReminderApi.Repositories
             return list;
         }
 
+        public List<Settlements> ReadByWard(int WardId)
+        {
+            List<Settlements> list = new List<Settlements>();
+            string sql = @"select a.SettlementId, a.Settlement, a.WardId, b.Ward, a.InsertUserId,
+                            c.Username as InsertUser, a.InsertDate, a.UpdateUserId, d.Username as UpdateUser,
+                            a.UpdateDate, b.LGAId, e.LGA, e.StateId, f.State 
+                            from Settlements a inner join Wards b on b.WardId = a.WardId
+                            inner join LGAs e on e.LGAId = b.LGAId inner join States f on f.StateId = e.StateId
+                            left outer join Users c on c.UserId = a.InsertUserId left outer join Users d on d.UserId = a.UpdateUserId
+                            b.WardId = @WardId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    list = conn.Query<Settlements>(sql, new { WardId }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return list;
+        }
+
+        public List<Settlements> ReadByLGA(int LGAId)
+        {
+            List<Settlements> list = new List<Settlements>();
+            string sql = @"select a.SettlementId, a.Settlement, a.WardId, b.Ward, a.InsertUserId,
+                            c.Username as InsertUser, a.InsertDate, a.UpdateUserId, d.Username as UpdateUser,
+                            a.UpdateDate, b.LGAId, e.LGA, e.StateId, f.State 
+                            from Settlements a inner join Wards b on b.WardId = a.WardId
+                            inner join LGAs e on e.LGAId = b.LGAId inner join States f on f.StateId = e.StateId
+                            left outer join Users c on c.UserId = a.InsertUserId left outer join Users d on d.UserId = a.UpdateUserId
+                            where e.LGAId = @LGAId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    list = conn.Query<Settlements>(sql, new { LGAId }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return list;
+        }
+
+
         public Response Create(SettlementContext context)
         {
             Response response = new Response();

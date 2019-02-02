@@ -28,6 +28,18 @@ namespace LagosHealthReminderApi.Controllers
             return _repo.Read();
         }
 
+        [HttpGet("Ward/{WardId}")]
+        public ActionResult<List<Settlements>> ReadByWard(int WardId)
+        {
+            return _repo.ReadByWard(WardId);
+        }
+
+        [HttpGet("LGA/{LGAId}")]
+        public ActionResult<List<Settlements>> ReadByLGA(int LGAId)
+        {
+            return _repo.ReadByLGA(LGAId);
+        }
+
         [HttpPost]
         public ActionResult<Response> Post([FromBody]SettlementContext context)
         {

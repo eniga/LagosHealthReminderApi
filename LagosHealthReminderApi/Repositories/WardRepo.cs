@@ -51,19 +51,19 @@ namespace LagosHealthReminderApi.Repositories
             return list;
         }
 
-        public List<Wards> Read(int SettlementId)
+        public List<Wards> Read(int LGAId)
         {
             List<Wards> list = new List<Wards>();
             string sql = @"Select a.WardId, a.Ward, a.LGAId,  b.LGA, a.InsertUserId
                             from Wards a inner join LGAs b on b.LGAId = a.LGAId 
                             left outer join Users c on c.UserId = a.InsertUserId
                             left outer join Users d on d.UserId = a.UpdateUserId
-                            where a.SettlementId = @SettlementId";
+                            where a.LGAId = @LGAId";
             try
             {
                 using (IDbConnection conn = GetConnection())
                 {
-                    list = conn.Query<Wards>(sql).ToList();
+                    list = conn.Query<Wards>(sql, new { LGAId }).ToList();
                 }
             }
             catch (Exception ex)

@@ -112,6 +112,32 @@ namespace LagosHealthReminderApi.Repositories
             return user;
         }
 
+        public Users GetUserByUsernameLogin(string Username)
+        {
+            Users user = new Users();
+            string sql = @"Select a.UserId, a.Username, a.DisplayName, a.Email, a.UserId InsertUserId, a.Username as InsertUser, a.PHCId, f.PHC,
+                            f.WardId, g.Ward, g.LGAId, h.LGA, h.StateId, i.State,
+                            a.InsertDate, a.UserId UpdateUserId, a.Username as UpdateUser, a.UpdateDate, a.IsActive, d.UserRoleId, d.RoleId, e.RoleName
+                            from Users a left outer join UserRoles d on d.UserId = a.UserId
+							left outer join Roles e on d.RoleId = e.RoleId 
+                            left outer join PHCs f on f.PHCId = a.PHCId
+							left outer join Wards g on g.WardId = f.WardId
+							left outer join LGAs h on h.LGAId = g.LGAId
+							left outer join States i on i.StateId = h.StateId Where a.Username = @Username";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    user = conn.Query<Users>(sql, new { Username }).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return user;
+        }
+
         public Response Create(Users users)
         {
             Response response = new Response();
@@ -240,7 +266,7 @@ namespace LagosHealthReminderApi.Repositories
                         {
                             response.Status = true;
                             response.StatusMessage = "Approved and completed successfully";
-                            response.details = GetUserByUsername(Username);
+                            response.details = GetUserByUsernameLogin(Username);
                             return response;
                         }
                     }
