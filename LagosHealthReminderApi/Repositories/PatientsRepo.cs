@@ -189,6 +189,20 @@ namespace LagosHealthReminderApi.Repositories
                             (@FirstName, @MiddleName, @LastName, @Phone, @AltPhone, @Email, @Dob, @SettlementId, @InsertUserId, GetDate(), @QrCode, @PHCId, @HouseNumber); SELECT CAST(SCOPE_IDENTITY() as int)";
             try
             {
+                if(context.Dob > DateTime.Now)
+                {
+                    response.Status = false;
+                    response.StatusMessage = "Invalid Date as date cannot be in the future.";
+                }
+                if(!string.IsNullOrEmpty(context.QrCode))
+                {
+                    var result = ReadQrCode(context.QrCode);
+                    if (result != null)
+                    {
+                        response.Status = false;
+                        response.StatusMessage = "QR Code already assigned to a patient";
+                    }
+                }
                 using (IDbConnection conn = GetConnection())
                 {
                     UsersRepo usersRepo = new UsersRepo(ConnectionString);
