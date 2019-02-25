@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,8 +22,6 @@ namespace LagosHealthReminderApi.Repositories
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public string ConnectionString;
-        private string username = "bolajiworld@gmail.com";
-        private string password = "password";
 
         public MessagesRepo(IConfiguration configuration)
         {
@@ -39,8 +38,9 @@ namespace LagosHealthReminderApi.Repositories
             MessageResponse response = new MessageResponse();
             try
             {
+                var details = GetSMSDetails();
                 var service = new messagerService.messagerSoapClient(messagerService.messagerSoapClient.EndpointConfiguration.messagerSoap);
-                var serviceResponse = service.SendSingleSMSAsync(username, password, request.Message, "myHealth", request.Destination).Result;
+                var serviceResponse = service.SendSingleSMSAsync(details.Username, details.Password, request.Message, "myHealth", request.Destination).Result;
                 var result = serviceResponse.Body.SendSingleSMSResult.ToString();
                 string jsonString = JsonConvert.DeserializeObject<string>(result);
                 MessageServiceResponse json = JsonConvert.DeserializeObject<MessageServiceResponse>(jsonString);
@@ -58,16 +58,27 @@ namespace LagosHealthReminderApi.Repositories
 
         public Response GetBalance()
         {
-            var service = new messagerService.messagerSoapClient(messagerService.messagerSoapClient.EndpointConfiguration.messagerSoap);
-            var serviceResponse = service.GetBalanceAsync(username, password).Result;
-            var result = serviceResponse.Body.GetBalanceResult.ToString();
-            string jsonString = JsonConvert.DeserializeObject<string>(result);
-            BalanceResult json = JsonConvert.DeserializeObject<BalanceResult>(jsonString);
-            Response response = new Response()
+            Response response = new Response();
+            try
             {
-                Status = true,
-                StatusMessage = json.balance.ToString()
-            };
+                var details = GetSMSDetails();
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(details.Url);
+                    HttpResponseMessage result = client.GetAsync($"?username={details.Username}&password={details.Password}&action=balance").Result;
+                    
+                    if(result.IsSuccessStatusCode)
+                    {
+                        var apiResponse = result.Content.ReadAsAsync<BalanceResult>().Result;
+                        response.Status = true;
+                        response.StatusMessage = apiResponse.balance.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
             return response;
         }
 
@@ -113,6 +124,24 @@ namespace LagosHealthReminderApi.Repositories
                 logger.Error(ex);
             }
             return list;
+        }
+
+        public SMSDetails GetSMSDetails()
+        {
+            SMSDetails details = new SMSDetails();
+            string sql = "select * from smsdetails";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    details = conn.Query<SMSDetails>(sql).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return details;
         }
     }
 }

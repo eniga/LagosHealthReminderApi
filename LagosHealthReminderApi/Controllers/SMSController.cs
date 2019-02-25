@@ -22,10 +22,16 @@ namespace LagosHealthReminderApi.Controllers
             _repo = new MessengerRepo(Configuration);
         }
 
-        [HttpGet]
+        [HttpGet("balance")]
         public GetBalanceResult GetBalance()
         {
             return _repo.GetSMSBalance();
+        }
+
+        [HttpGet("reminder")]
+        public Response SendReminder()
+        {
+            return _repo.SendReminder();
         }
     }
 }

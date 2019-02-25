@@ -35,7 +35,7 @@ namespace LagosHealthReminderApi.Repositories
         public List<QrCodes> Read()
         {
             List<QrCodes> list = new List<QrCodes>();
-            string sql = @"Select a.QrCodeId, a.QrCode, a.QrCodeImage, a.InsertUserId,
+            string sql = @"Select a.QrCodeId, a.QrCode, a.InsertUserId,
                             b.Username InsertUser, a.InsertDate, a.UpdateUserId, 
                             c.Username UpdateUser, a.UpdateDate, a.printstatus
                             from QrCodes a inner join Users b on b.UserId = a.InsertUserId

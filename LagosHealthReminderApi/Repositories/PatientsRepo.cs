@@ -29,7 +29,7 @@ namespace LagosHealthReminderApi.Repositories
         public List<Patients> ReadAll()
         {
             List<Patients> list = new List<Patients>();
-            string sql = @"SELECT a.PatientId, a.QrCode, b.QrCodeImage, i.PHCId, i.PHC,
+            string sql = @"SELECT a.PatientId, a.QrCode, b.QrCodeImage, a.PHCId, i.PHC,
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
@@ -41,8 +41,8 @@ namespace LagosHealthReminderApi.Repositories
                             inner join LGAs e on e.LGAId = d.LGAId
                             inner join States f on f.StateId = e.StateId
                             inner join users g on g.UserId = a.InsertUserId
-                            left outer join PHCs i on i.WardId = c.WardId
-                            left outer join Users h on h.UserId = a.UpdateUserId";
+                            left outer join PHCs i on i.PHCId = a.PHCId
+                            left outer join Users h on h.UserId = a.UpdateUserId order by a.PatientId";
             try
             {
                 using (IDbConnection conn = GetConnection())
