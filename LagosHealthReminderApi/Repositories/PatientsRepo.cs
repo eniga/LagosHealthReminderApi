@@ -193,6 +193,13 @@ namespace LagosHealthReminderApi.Repositories
                 {
                     response.Status = false;
                     response.StatusMessage = "Invalid Date as date cannot be in the future.";
+                    return response;
+                }
+                if(context.Phone.Length != 11)
+                {
+                    response.Status = false;
+                    response.StatusMessage = "Invalid Phone Number";
+                    return response;
                 }
                 if(!string.IsNullOrEmpty(context.QrCode))
                 {
@@ -201,6 +208,7 @@ namespace LagosHealthReminderApi.Repositories
                     {
                         response.Status = false;
                         response.StatusMessage = "QR Code already assigned to a patient";
+                        return response;
                     }
                 }
                 using (IDbConnection conn = GetConnection())
