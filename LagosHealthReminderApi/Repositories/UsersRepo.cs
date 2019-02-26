@@ -145,6 +145,13 @@ namespace LagosHealthReminderApi.Repositories
             sql += "VALUES(@Username, @DisplayName, @Email, 'site', @PasswordHash, @PasswordSalt, GetDate(), @InsertUserId, 1, @PHCId)";
             try
             {
+                var details = GetUserByUsername(users.Username);
+                if(details != null)
+                {
+                    response.Status = false;
+                    response.StatusMessage = "Username already exists";
+                    return response;
+                }
                 string salt = string.Empty;
                 UserContext context = new UserContext()
                 {
