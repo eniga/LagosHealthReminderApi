@@ -214,7 +214,7 @@ namespace LagosHealthReminderApi.Repositories
         {
             Response response = new Response();
             string sql = @"UPDATE USERS SET USERNAME = @Username, DisplayName = @DisplayName, Email = @Email, PHCId = @PHCId,
-                            UpdateUserId = @UpdateUserId, UpdateDate = GetDate(), IsActive = @IsActive, PHCId = @PHCId WHERE USERID = @UserId";
+                            UpdateUserId = @UpdateUserId, UpdateDate = GetDate(), IsActive = @IsActive WHERE USERID = @UserId";
             try
             {
                 using (IDbConnection conn = GetConnection())

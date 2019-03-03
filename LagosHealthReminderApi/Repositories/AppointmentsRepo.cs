@@ -293,7 +293,7 @@ namespace LagosHealthReminderApi.Repositories
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId
                             inner join Appointments g on g.PatientAppointmentId = a.PatientAppointmentId
-                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() + 7 and g.ConfirmationDate is null and g.StatusId = 1";
+                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() - 7 and g.ConfirmationDate is null and g.StatusId = 1";
             string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, a.Defaulter, a.ContactedOn, a.ContactedBy, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
@@ -346,7 +346,7 @@ namespace LagosHealthReminderApi.Repositories
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId inner join Settlements f on f.SettlementId = b.SettlementId
                             left outer join Users e on a.UpdateUserId = e.UserId
                             inner join Appointments g on g.PatientAppointmentId = a.PatientAppointmentId
-                            where a.ServiceTypeId = @ServiceTypeId and g.AppointmentDate < GETDATE() + 7 and g.ConfirmationDate is null and g.StatusId = 1";
+                            where a.ServiceTypeId = @ServiceTypeId and b.PHCId = @PHCId and g.AppointmentDate < GETDATE() - 7 and g.ConfirmationDate is null and g.StatusId = 1";
             string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, a.Defaulter, a.ContactedOn, a.ContactedBy, 
                             a.AppointmentDate, a.StatusId, a.ConfirmationDate, a.InsertUserId,a.InsertDate, a.UpdateUserId, a.UpdateDate
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
