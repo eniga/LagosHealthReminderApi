@@ -224,7 +224,7 @@ namespace LagosHealthReminderApi.Repositories
             catch (Exception ex)
             {
                 response.Status = false;
-                response.StatusMessage = "System Malfunction";
+                response.StatusMessage = ex.Message; // "System Malfunction";
                 logger.Error(ex);
             }
             return response;

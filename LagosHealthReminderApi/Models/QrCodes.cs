@@ -24,4 +24,13 @@ namespace LagosHealthReminderApi.Models
         public int NumberOfCodes { get; set; }
         public int InsertUserId { get; set; }
     }
+
+    public class QrCodeStats
+    {
+        public int Generated { get; set; }
+        public int Printed { get; set; } 
+        public int Unprinted { get; set; }
+        public int Mapped { get; set; }
+        public int Unmapped { get; set; }
+    }
 }

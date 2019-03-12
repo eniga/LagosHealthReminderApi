@@ -33,6 +33,7 @@ namespace LagosHealthReminderApi.Models
         public DateTime ContactedOn { get; set; }
         public int ContactedBy { get; set; }
         public string ContactByUsername { get; set; }
+        public int ReminderSent { get; set; }
     }
 
     public class PatientAppointment

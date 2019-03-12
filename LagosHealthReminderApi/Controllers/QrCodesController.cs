@@ -27,6 +27,12 @@ namespace LagosHealthReminderApi.Controllers
             return _repo.Read();
         }
 
+        [HttpGet("stats")]
+        public QrCodeStats GetStats()
+        {
+            return _repo.GetStats();
+        }
+
         [HttpPost]
         public ActionResult<Response> GenerateCodes(QrCodesRequest request)
         {

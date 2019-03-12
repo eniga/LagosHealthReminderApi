@@ -271,6 +271,48 @@ namespace LagosHealthReminderApi.Repositories
                         bool ok = ComparePassword(Password, result.PasswordHash, result.PasswordSalt);
                         if(ok)
                         {
+                            var details = GetUserByUsernameLogin(Username);
+                            if (details.PHCId > 0)
+                            {
+                                response.Status = true;
+                                response.StatusMessage = "Approved and completed successfully";
+                                response.details = details;
+                            }
+                            else
+                            {
+                                response.Status = false;
+                                response.StatusMessage = "User is not permitted";
+                            }
+                            return response;
+                        }
+                    }
+                    response.Status = false;
+                    response.StatusMessage = "Invalid Username / Password";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.StatusMessage = "System Malfunction";
+                logger.Error(ex);
+            }
+            return response;
+        }
+
+        public LoginResponse Login2(string Username, string Password)
+        {
+            LoginResponse response = new LoginResponse();
+            string sql = "SELECT PASSWORDHASH, PASSWORDSALT FROM USERS WHERE LOWER(USERNAME) = LOWER(@Username)";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    var result = conn.Query<UserContext>(sql, new { Username }).FirstOrDefault();
+                    if (result != null)
+                    {
+                        bool ok = ComparePassword(Password, result.PasswordHash, result.PasswordSalt);
+                        if (ok)
+                        {
                             response.Status = true;
                             response.StatusMessage = "Approved and completed successfully";
                             response.details = GetUserByUsernameLogin(Username);

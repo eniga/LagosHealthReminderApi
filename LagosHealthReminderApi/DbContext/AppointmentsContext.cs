@@ -21,7 +21,7 @@ namespace LagosHealthReminderApi.DbContext
         public int Defaulter { get; set; }
         public DateTime ContactedOn { get; set; }
         public int ContactedBy { get; set; }
-
+        public int ReminderSent { get; set; }
     }
 
     public class PatientAppointmentContext

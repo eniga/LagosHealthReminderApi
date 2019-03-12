@@ -114,7 +114,7 @@ namespace LagosHealthReminderApi.Repositories
         public Response SendReminder()
         {
             Response response = new Response();
-            string sql = @"select a.AppointmentId, a.AppointmentDate, b.ServiceKindName, c.ServiceTypeName, c.SMSMessage, e.FirstName, e.LastName, e.Phone 
+            string sql = @"select a.AppointmentId, a.AppointmentDate, b.ServiceKindName, c.ServiceTypeName, c.SMSMessage, e.FirstName, e.LastName, e.Phone, e.PatientId 
                             from Appointments a inner join ServiceKinds b on a.ServiceKindId = b.ServiceKindId
                             inner join ServiceTypes c on b.ServiceTypeId = c.ServiceTypeId
                             inner join PatientAppointment d on a.PatientAppointmentId = d.PatientAppointmentId
@@ -125,7 +125,9 @@ namespace LagosHealthReminderApi.Repositories
                 using (IDbConnection conn = GetConnection())
                 {
                     var result = conn.Query<SMSNotificationRequest>(sql).ToList();
-                    result.ForEach(item =>
+                    var first = result.Take(result.Count / 2).ToList();
+                    var second = result.Skip(result.Count / 2).ToList();
+                    first.ForEach(item =>
                     {
                         item.SMSMessage = item.SMSMessage.Replace("[firstname]", item.FirstName);
                         item.Phone = "234" + item.Phone.Substring(item.Phone.Length - 10, 10);
@@ -135,6 +137,20 @@ namespace LagosHealthReminderApi.Repositories
                             Phone = item.Phone
                         };
                         response = SendMessage(request);
+                        var s = new ReminderMessages()
+                        {
+                            AppointmentId = item.AppointmentId,
+                            Message = item.SMSMessage,
+                            PatientId = item.PatientId,
+                            PhoneNumber = item.Phone,
+                            Sent = response.Status
+                        };
+                        conn.Insert<ReminderMessages>(s);
+                        conn.Execute("update Appointments set ReminderSent = 3 where AppointmentId = @AppointmentId", new { item.AppointmentId });
+                    });
+                    second.ForEach(item =>
+                    {
+                        conn.Execute("update Appointments set ReminderSent = 4 where AppointmentId = @AppointmentId", new { item.AppointmentId });
                     });
                 }
             }
@@ -147,7 +163,7 @@ namespace LagosHealthReminderApi.Repositories
 
         public void UpdateSMSSent()
         {
-            string sql = "update SMSDetails set sent = sent + 1, balance = balance - 1";
+            string sql = "update SMSDetails set sent = sent + 1, balance = balance - 1, lastsent = GetDate()";
             try
             {
                 using (IDbConnection conn = GetConnection())

@@ -67,6 +67,12 @@ namespace LagosHealthReminderApi.Controllers
             return _repo.Login(user.Username, user.Password);
         }
 
+        [HttpPost("Login2")]
+        public ActionResult<Response> Login2([FromBody]UserLogin user)
+        {
+            return _repo.Login2(user.Username, user.Password);
+        }
+
         [HttpPost("ForgotPassword")]
         public ActionResult<Response> ForgotPassword([FromBody] string Username)
         {

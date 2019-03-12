@@ -27,10 +27,10 @@ namespace LagosHealthReminderApi.Repositories
             return new SqlConnection(ConnectionString);
         }
 
-        public List<StateContext> Read()
+        public List<StateContext> ReadAll()
         {
             List<StateContext> list = new List<StateContext>();
-            string sql = "SELECT * FROM STATES";
+            string sql = "SELECT a.*, b.Username InsertUser FROM STATES a inner join users b on a.InsertUserId = b.UserId";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -43,6 +43,24 @@ namespace LagosHealthReminderApi.Repositories
                 logger.Error(ex);
             }
             return list;
+        }
+
+        public StateContext Read(int StateId)
+        {
+            StateContext result = new StateContext();
+            string sql = "SELECT a.*, b.Username InsertUser FROM STATES a inner join users b on a.InsertUserId = b.UserId where a.StateId = @StateId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    result = conn.Query<StateContext>(sql, new { StateId }).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+            return result;
         }
 
         public Response Create(StateContext context)
@@ -97,7 +115,7 @@ namespace LagosHealthReminderApi.Repositories
             {
                 using (IDbConnection conn = GetConnection())
                 {
-                    conn.Execute(sql, new { StateId });
+                    conn.Delete<StateContext>(StateId);
                     response.Status = true;
                     response.StatusMessage = "Approved and completed successfully";
                 }

@@ -16,16 +16,24 @@ namespace LagosHealthReminderApi.Controllers
     public class DashboardController : ControllerBase
     {
         public readonly DashboardRepo _repo;
+        public readonly MessengerRepo messengerRepo;
 
         public DashboardController(IConfiguration Configuration)
         {
             _repo = new DashboardRepo(Configuration);
+            messengerRepo = new MessengerRepo(Configuration);
         }
 
         [HttpGet]
         public ActionResult<Dashboard> Get()
         {
             return _repo.Get();
+        }
+
+        [HttpGet("sms")]
+        public ActionResult<SMSDetails> GetSMSDetails()
+        {
+            return messengerRepo.GetSMSDetails();
         }
     }
 }
