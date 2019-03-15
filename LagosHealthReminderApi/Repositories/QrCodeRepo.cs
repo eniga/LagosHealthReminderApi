@@ -59,7 +59,7 @@ namespace LagosHealthReminderApi.Repositories
             QrCodeStats obj = new QrCodeStats();
             string sql = @"select count(a.QrCode) Generated, SUM(CASE a.PrintStatus WHEN 1 THEN 1 ELSE 0 END) Unprinted,
                 SUM(CASE a.PrintStatus WHEN 2 THEN 1 ELSE 0 END) Printed, count(b.PatientId) Mapped,
-                (select count(*) from qrcodes where cast(qrcode as varchar) not in (select qrcode from patients)) Unmapped
+                count(a.QrCode) - count(b.PatientId) Unmapped
                 from QrCodes a left outer join patients b on cast(a.QrCode as VARCHAR) = b.QrCode ";
             try
             {

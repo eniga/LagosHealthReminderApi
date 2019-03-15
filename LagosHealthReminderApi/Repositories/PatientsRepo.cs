@@ -201,6 +201,12 @@ namespace LagosHealthReminderApi.Repositories
                     response.StatusMessage = "Invalid Phone Number";
                     return response;
                 }
+                if(string.IsNullOrEmpty(context.QrCode))
+                {
+                    response.Status = false;
+                    response.StatusMessage = "Kindly assign a QR Code to this patient";
+                    return response;
+                }
                 if(!string.IsNullOrEmpty(context.QrCode))
                 {
                     var result = ReadQrCode(context.QrCode);
