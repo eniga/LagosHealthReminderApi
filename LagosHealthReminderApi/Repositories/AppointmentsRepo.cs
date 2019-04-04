@@ -390,6 +390,12 @@ namespace LagosHealthReminderApi.Repositories
         public Response CreateAppointment(AppointmentRequest appointments)
         {
             Response response = new Response();
+            if(appointments.AppointmentDate.Date < DateTime.Now.Date)
+            {
+                response.Status = false;
+                response.StatusMessage = "Appointment date now allowed";
+                return response;
+            }
             string sql = @"INSERT INTO PatientAppointment (PATIENTID, SERVICETYPEID, OPTIONTYPE,
                             INSERTUSERID, INSERTDATE) VALUES (@PatientId, @ServiceTypeId, @OptionType,
                             @InsertUserId, GetDate()); SELECT CAST(SCOPE_IDENTITY() as int)";
