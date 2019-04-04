@@ -107,10 +107,10 @@ namespace LagosHealthReminderApi.Repositories
         public List<CampaignMessage> GetCampaignMessages()
         {
             List<CampaignMessage> list = new List<CampaignMessage>();
-            string sql = @"select a.CampaignId, a.LGAId, b.LGA, a.InsertUserId, c.Username InsertUser,
+            string sql = @"select a.CampaignId, a.LGAId, (CASE WHEN a.LGAId = 999 THEN 'All' ELSE b.LGA END) LGA, a.InsertUserId, c.Username InsertUser,
                             a.InsertDate, a.DateSent, a.Message, a.Status
                             from CampaignMessages a
-                            inner join LGAs b on a.LGAId = b.LGAId
+                            left outer join LGAs b on a.LGAId = b.LGAId
                             inner join Users c on a.InsertUserId = c.UserId";
             try
             {
@@ -124,6 +124,27 @@ namespace LagosHealthReminderApi.Repositories
                 logger.Error(ex);
             }
             return list;
+        }
+
+        public Response DeleteCampaignMessage(int CampaignId)
+        {
+            Response response = new Response();
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    conn.Delete<CampaignMessageContext>(CampaignId);
+                    response.Status = true;
+                    response.StatusMessage = "Approved and completed successfully";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.StatusMessage = "System malfunction";
+                logger.Error(ex);
+            }
+            return response;
         }
 
         public SMSDetails GetSMSDetails()

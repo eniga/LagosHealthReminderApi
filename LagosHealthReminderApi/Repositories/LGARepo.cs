@@ -30,7 +30,7 @@ namespace LagosHealthReminderApi.Repositories
         public Response Create(LGAContext context)
         {
             Response response = new Response();
-            string sql = "INSERT INTO LGAS (LGA, INSERTUSERID, INSERTDATE) VALUES (@LGA, @InsertUserId, GetDate())";
+            string sql = "INSERT INTO LGAS (LGA, STATEID, INSERTUSERID, INSERTDATE) VALUES (@LGA, @StateId, @InsertUserId, GetDate())";
             try
             {
                 using (IDbConnection conn = GetConnection())
@@ -74,7 +74,7 @@ namespace LagosHealthReminderApi.Repositories
         public Response Update(LGAContext context)
         {
             Response response = new Response();
-            string sql = "UPDATE LGAS SET LGA = @LGA, UPDATEUSERID = @UpdateUserId, UPDATEDATE = GETDATE() WHERE LGAID = @LGAId";
+            string sql = "UPDATE LGAS SET LGA = @LGA, STATEID = @StateId, UPDATEUSERID = @UpdateUserId, UPDATEDATE = GETDATE() WHERE LGAID = @LGAId";
             try
             {
                 using (IDbConnection conn = GetConnection())

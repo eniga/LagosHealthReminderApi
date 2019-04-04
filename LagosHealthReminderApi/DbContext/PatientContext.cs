@@ -1,4 +1,5 @@
-﻿using LagosHealthReminderApi.Models;
+﻿using Dapper;
+using LagosHealthReminderApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace LagosHealthReminderApi.DbContext
 {
+    [Table("Patients")]
     public class PatientContext
     {
+        [Key]
         public int PatientId { get; set; }
         public string QrCode { get; set; }
         public string FirstName { get; set; }

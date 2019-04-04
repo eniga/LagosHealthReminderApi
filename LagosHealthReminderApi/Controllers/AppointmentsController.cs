@@ -99,5 +99,20 @@ namespace LagosHealthReminderApi.Controllers
         {
             return _repo.DeleteAppointment(AppointmentId);
         }
+
+        [HttpGet("Randomization")]
+        public ActionResult SetRandomization()
+        {
+            try
+            {
+                _repo.Randomization();
+                return StatusCode(200);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+            
+        }
     }
 }

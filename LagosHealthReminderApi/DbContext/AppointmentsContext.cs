@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace LagosHealthReminderApi.DbContext
 {
+    [Table("Appointments")]
     public class AppointmentsContext
     {
+        [Key]
         public int AppointmentId { get; set; }
         public int PatientAppointmentId { get; set; }
         public int ServiceKindId { get; set; }
+        [NotMapped]
         public string OptionType { get; set; }
         public DateTime AppointmentDate { get; set; }
         public int StatusId { get; set; }

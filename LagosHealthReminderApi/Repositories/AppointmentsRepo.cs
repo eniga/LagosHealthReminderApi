@@ -575,5 +575,55 @@ namespace LagosHealthReminderApi.Repositories
             }
             return ok;
         }
+
+        public void Randomization()
+        {
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    var result = conn.GetList<AppointmentsContext>("WHERE CAST(InsertDate AS DATE) = CAST(GETDATE() - 1 AS DATE) AND REMINDERSENT IS NULL").ToList();
+                    var first = result.Take(result.Count / 2).ToList();
+                    var second = result.Skip(result.Count / 2).ToList();
+
+                    var agentTask = new List<Task>();
+                    agentTask.Add(Task.Factory.StartNew(() =>
+                    {
+                        first.ForEach(item =>
+                        {
+                            SetRandomization(item.AppointmentId, 2);
+                        });
+                    }));
+                    agentTask.Add(Task.Factory.StartNew(() =>
+                    {
+                        second.ForEach(item =>
+                        {
+                            SetRandomization(item.AppointmentId, 4);
+                        });
+                    }));
+                    Task.WaitAny(agentTask.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+        }
+
+        public void SetRandomization(int AppointmentId, int ReminderSent)
+        {
+            string sql = "update Appointments set ReminderSent = @ReminderSent where AppointmentId = @AppointmentId";
+            try
+            {
+                using (IDbConnection conn = GetConnection())
+                {
+                    conn.Execute(sql, new { AppointmentId, ReminderSent });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+        }
     }
 }

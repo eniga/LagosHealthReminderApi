@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace LagosHealthReminderApi.DbContext
 {
+    [Table("Users")]
     public class UserContext
     {
+        [Key]
         public int UserId { get; set; }
         public string Username { get; set; }
         public string DisplayName { get; set; }

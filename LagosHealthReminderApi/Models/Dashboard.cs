@@ -7,10 +7,14 @@ namespace LagosHealthReminderApi.Models
 {
     public class Dashboard
     {
-        public int Patients { get; set; }
-        public int Settlements { get; set; }
-        public int Appointments { get; set; }
-        public int Defaulters { get; set; }
-        public int TodayAppointments { get; set; }
+        public int LastMonth { get; set; }
+        public int CurrentMonth { get; set; }
+    }
+
+    public class MonthlyBreakdown
+    {
+        public int MonthId { get; set; }
+        public string MonthName { get; set; }
+        public int TotalCount { get; set; }
     }
 }

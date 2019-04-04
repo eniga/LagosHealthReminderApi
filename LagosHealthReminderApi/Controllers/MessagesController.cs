@@ -39,6 +39,12 @@ namespace LagosHealthReminderApi.Controllers
             return repo.GetCampaignMessages();
         }
 
+        [HttpDelete("Campaign/{CampaignId}")]
+        public Response DeleteCampaignMessage(int CampaignId)
+        {
+            return repo.DeleteCampaignMessage(CampaignId);
+        }
+
         //[HttpGet("Test")]
         //public Response TestMessage()
         //{

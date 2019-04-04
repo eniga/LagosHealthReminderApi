@@ -57,12 +57,13 @@ namespace LagosHealthReminderApi.Repositories
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri(details.Url);
-                    HttpResponseMessage result = client.GetAsync($"?username={details.Username}&password={details.Password}&action=balance").Result;
+                    HttpResponseMessage result = client.GetAsync($"?username={details.Username}&password={details.Password}&balance=true").Result;
 
                     if (result.IsSuccessStatusCode)
                     {
                         var Apiresponse = result.Content.ReadAsStringAsync().Result;
-                        balance = JsonConvert.DeserializeObject<GetBalanceResult>(Apiresponse);
+                        //balance = JsonConvert.DeserializeObject<GetBalanceResult>(Apiresponse);
+                        balance.balance = Apiresponse;
                     }
                 }
             }
@@ -82,13 +83,13 @@ namespace LagosHealthReminderApi.Repositories
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri(details.Url);
-                    HttpResponseMessage result = client.GetAsync($"?username={details.Username}&password={details.Password}&message={request.Message}&sender={details.AppName}&mobiles={request.Phone}").Result;
+                    HttpResponseMessage result = client.GetAsync($"?username={details.Username}&password={details.Password}&sender={details.AppName}&recipient={request.Phone}&message={request.Message}").Result;
 
                     if (result.IsSuccessStatusCode)
                     {
                         var Apiresponse = result.Content.ReadAsStringAsync().Result;
-                        var json = JsonConvert.DeserializeObject<SMSResponse>(Apiresponse);
-                        if(json.status == "OK")
+                        //var json = JsonConvert.DeserializeObject<SMSResponse>(Apiresponse);
+                        if(Apiresponse.Contains("OK"))
                         {
                             response.Status = true;
                             response.StatusMessage = "Approved and completed successfully";
@@ -119,38 +120,38 @@ namespace LagosHealthReminderApi.Repositories
                             inner join ServiceTypes c on b.ServiceTypeId = c.ServiceTypeId
                             inner join PatientAppointment d on a.PatientAppointmentId = d.PatientAppointmentId
                             inner join Patients e on d.PatientId = e.PatientId
-                            WHERE CAST(a.AppointmentDate AS DATE) = CAST(GETDATE() + 1 AS DATE)";
+                            WHERE CAST(a.AppointmentDate AS DATE) = CAST(GETDATE() + 1 AS DATE) AND (a.ReminderSent = 2 OR a.ReminderSent IS NULL)";
             try
             {
                 using (IDbConnection conn = GetConnection())
                 {
                     var result = conn.Query<SMSNotificationRequest>(sql).ToList();
-                    var first = result.Take(result.Count / 2).ToList();
-                    var second = result.Skip(result.Count / 2).ToList();
-                    first.ForEach(item =>
+                    result.ForEach(item =>
                     {
-                        item.SMSMessage = item.SMSMessage.Replace("[firstname]", item.FirstName);
-                        item.Phone = "234" + item.Phone.Substring(item.Phone.Length - 10, 10);
-                        SMSRequest request = new SMSRequest()
+                        var agentTask = new List<Task>();
+                        agentTask.Add(Task.Factory.StartNew(() =>
                         {
-                            Message = item.SMSMessage,
-                            Phone = item.Phone
-                        };
-                        response = SendMessage(request);
-                        var s = new ReminderMessages()
-                        {
-                            AppointmentId = item.AppointmentId,
-                            Message = item.SMSMessage,
-                            PatientId = item.PatientId,
-                            PhoneNumber = item.Phone,
-                            Sent = response.Status
-                        };
-                        conn.Insert<ReminderMessages>(s);
-                        conn.Execute("update Appointments set ReminderSent = 3 where AppointmentId = @AppointmentId", new { item.AppointmentId });
-                    });
-                    second.ForEach(item =>
-                    {
-                        conn.Execute("update Appointments set ReminderSent = 4 where AppointmentId = @AppointmentId", new { item.AppointmentId });
+                            item.SMSMessage = item.SMSMessage.Replace("[firstname]", item.FirstName);
+                            item.Phone = "234" + item.Phone.Substring(item.Phone.Length - 10, 10);
+                            SMSRequest request = new SMSRequest()
+                            {
+                                Message = item.SMSMessage,
+                                Phone = item.Phone
+                            };
+                            response = SendMessage(request);
+                            var s = new ReminderMessages()
+                            {
+                                AppointmentId = item.AppointmentId,
+                                Message = item.SMSMessage,
+                                PatientId = item.PatientId,
+                                PhoneNumber = item.Phone,
+                                Sent = response.Status
+                            };
+                            conn.Insert<ReminderMessages>(s);
+                            conn.Execute("update Appointments set ReminderSent = 3 where AppointmentId = @AppointmentId", new { item.AppointmentId });
+                        }));
+                        Task.WaitAny(agentTask.ToArray());
+                        
                     });
                 }
             }

@@ -29,18 +29,17 @@ namespace LagosHealthReminderApi.Repositories
         public List<Patients> ReadAll()
         {
             List<Patients> list = new List<Patients>();
-            string sql = @"SELECT a.PatientId, a.QrCode, b.QrCodeImage, a.PHCId, i.PHC,
+            string sql = @"SELECT a.PatientId, a.QrCode, a.PHCId, i.PHC,
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
                             a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
                             from Patients a 
-                            left outer join QrCodes b on b.QrCode = a.QrCode
-                            inner join Settlements c on c.SettlementId = a.SettlementId
-                            inner join Wards d on d.WardId = c.WardId
-                            inner join LGAs e on e.LGAId = d.LGAId
-                            inner join States f on f.StateId = e.StateId
-                            inner join users g on g.UserId = a.InsertUserId
+                            left outer join Settlements c on c.SettlementId = a.SettlementId
+                            left outer join Wards d on d.WardId = c.WardId
+                            left outer join LGAs e on e.LGAId = d.LGAId
+                            left outer join States f on f.StateId = e.StateId
+                            left outer join users g on g.UserId = a.InsertUserId
                             left outer join PHCs i on i.PHCId = a.PHCId
                             left outer join Users h on h.UserId = a.UpdateUserId order by a.PatientId";
             try
@@ -60,18 +59,17 @@ namespace LagosHealthReminderApi.Repositories
         public Patients Read(int PatientId)
         {
             Patients patient = new Patients();
-            string sql = @"SELECT a.PatientId, a.QrCode, b.QrCodeImage, i.PHCId, i.PHC,
+            string sql = @"SELECT a.PatientId, a.QrCode, i.PHCId, i.PHC,
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
                             a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
                             from Patients a 
-                            left outer join QrCodes b on b.QrCode = a.QrCode
-                            inner join Settlements c on c.SettlementId = a.SettlementId
-                            inner join Wards d on d.WardId = c.WardId
-                            inner join LGAs e on e.LGAId = d.LGAId
-                            inner join States f on f.StateId = e.StateId
-                            inner join users g on g.UserId = a.InsertUserId
+                            left outer join Settlements c on c.SettlementId = a.SettlementId
+                            left outer join Wards d on d.WardId = c.WardId
+                            left outer join LGAs e on e.LGAId = d.LGAId
+                            left outer join States f on f.StateId = e.StateId
+                            left outer join users g on g.UserId = a.InsertUserId
                             left outer join PHCs i on i.WardId = c.WardId
                             left outer join Users h on h.UserId = a.UpdateUserId WHERE a.PatientId = @PatientId";
             try
@@ -91,18 +89,17 @@ namespace LagosHealthReminderApi.Repositories
         public Patients ReadQrCode(string QrCode)
         {
             Patients patient = new Patients();
-            string sql = @"SELECT a.PatientId, a.QrCode, b.QrCodeImage, i.PHCId, i.PHC,
+            string sql = @"SELECT a.PatientId, a.QrCode, i.PHCId, i.PHC,
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
                             a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
                             from Patients a 
-                            left outer join QrCodes b on b.QrCode = a.QrCode
-                            inner join Settlements c on c.SettlementId = a.SettlementId
-                            inner join Wards d on d.WardId = c.WardId
-                            inner join LGAs e on e.LGAId = d.LGAId
-                            inner join States f on f.StateId = e.StateId
-                            inner join users g on g.UserId = a.InsertUserId
+                            left outer join Settlements c on c.SettlementId = a.SettlementId
+                            left outer join Wards d on d.WardId = c.WardId
+                            left outer join LGAs e on e.LGAId = d.LGAId
+                            left outer join States f on f.StateId = e.StateId
+                            left outer join users g on g.UserId = a.InsertUserId
                             left outer join PHCs i on i.WardId = c.WardId
                             left outer join Users h on h.UserId = a.UpdateUserId WHERE a.QrCode = @QrCode";
             try
@@ -122,18 +119,17 @@ namespace LagosHealthReminderApi.Repositories
         public List<Patients> ReadByPhone(string PhoneNumber)
         {
             List<Patients> list = new List<Patients>();
-            string sql = @"SELECT a.PatientId, a.QrCode, b.QrCodeImage, i.PHCId, i.PHC,
+            string sql = @"SELECT a.PatientId, a.QrCode, i.PHCId, i.PHC,
                             a.FirstName, a.MiddleName, a.LastName, a.Phone, a.AltPhone,
                             a.Email, a.Dob, a.SettlementId, c.Settlement, c.WardId, d.Ward,
                             d.LGAId, e.LGA, e.StateId, f.State, a.InsertUserId, g.username InsertUser,
                             a.InsertDate, a.UpdateDate, a.UpdateUserId, h.Username UpdateUser, a.HouseNumber
                             from Patients a 
-                            left outer join QrCodes b on b.QrCode = a.QrCode
-                            inner join Settlements c on c.SettlementId = a.SettlementId
-                            inner join Wards d on d.WardId = c.WardId
-                            inner join LGAs e on e.LGAId = d.LGAId
-                            inner join States f on f.StateId = e.StateId
-                            inner join users g on g.UserId = a.InsertUserId
+                            left outer join Settlements c on c.SettlementId = a.SettlementId
+                            left outer join Wards d on d.WardId = c.WardId
+                            left outer join LGAs e on e.LGAId = d.LGAId
+                            left outer join States f on f.StateId = e.StateId
+                            left outer join users g on g.UserId = a.InsertUserId
                             left outer join PHCs i on i.WardId = c.WardId
                             left outer join Users h on h.UserId = a.UpdateUserId where SUBSTRING(a.Phone, LEN(a.Phone) - 9, 10) = @PhoneNumber";
             try
@@ -289,7 +285,7 @@ namespace LagosHealthReminderApi.Repositories
             string sql1 = @"select a.PatientAppointmentId, a.PatientId, concat(b.FirstName, ' ', b.MiddleName, ' ', b.LastName) PatientName, b.Phone, b.AltPhone, b.Dob,
                             a.ServiceTypeId, d.ServiceTypeName, a.InsertUserId, c.Username InsertUser, a.InsertDate, a.UpdateUserId, e.Username UpdateUser, a.UpdateDate 
                             from PatientAppointment a inner join patients b on a.patientid = b.patientid
-                            inner join users c on a.InsertUserId = c.UserId
+                            left outer join users c on a.InsertUserId = c.UserId
                             inner join ServiceTypes d on a.ServiceTypeId = d.ServiceTypeId
                             left outer join Users e on a.UpdateUserId = e.UserId where a.PatientId = @PatientId and a.ServiceTypeId = @ServiceTypeId";
             string sql2 = @"select a.AppointmentId, a.PatientAppointmentId, a.ServiceKindId, b.ServiceKindName, 

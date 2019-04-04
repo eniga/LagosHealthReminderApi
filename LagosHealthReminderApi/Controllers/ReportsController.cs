@@ -22,10 +22,16 @@ namespace LagosHealthReminderApi.Controllers
             repo = new ReportsRepo(configuration);
         }
 
-        [HttpGet]
-        public Object GetAll()
+        [HttpGet("appointments")]
+        public List<AppointmentReport> GetAppointments()
         {
             return repo.GetAppointments();
+        }
+
+        [HttpGet("appointments/{StartDate}/{EndDate}")]
+        public List<AppointmentReport> GetAppointmentsRange(DateTime StartDate, DateTime EndDate)
+        {
+            return repo.GetAppointmentsRange(StartDate, EndDate);
         }
     }
 }
